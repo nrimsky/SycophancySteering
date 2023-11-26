@@ -14,6 +14,10 @@ import matplotlib.cm as cm
 import numpy as np
 import argparse
 from utils.helpers import SteeringSettings
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
+
+plt.rcParams['font.size'] = 12
 
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -78,7 +82,7 @@ def plot_in_distribution_data_for_layer(
         f"{settings.make_result_save_suffix(layer=layer)}.svg",
     )
     plt.clf()
-    plt.figure(figsize=(6, 6))
+    plt.figure(figsize=(6, 5))
     all_results = {}
     for few_shot, label in few_shot_options:
         settings.few_shot = few_shot
@@ -95,8 +99,8 @@ def plot_in_distribution_data_for_layer(
                 label=label,
                 marker="o",
                 linestyle="dashed",
-                markersize=5,
-                linewidth=2.5,
+                markersize=8,
+                linewidth=2,
             )
             all_results[few_shot] = res_list
         except:
@@ -133,8 +137,8 @@ def plot_truthful_qa_data_for_layer(
             avg_key_prob = get_avg_key_prob(category_results, "correct")
             res_per_category[category].append((multiplier, avg_key_prob))
     plt.clf()
-    plt.figure(figsize=(6, 6))
-    colors = cm.rainbow(np.linspace(0, 1, len(res_per_category)))
+    plt.figure(figsize=(7.5, 5))
+    colors = cm.viridis(np.linspace(0, 1, len(res_per_category)))
     for idx, (category, res_list) in enumerate(res_per_category.items()):
         res_per_category[category].sort(key=lambda x: x[0])
         plt.plot(
@@ -143,14 +147,15 @@ def plot_truthful_qa_data_for_layer(
             label=category,
             marker="o",
             linestyle="dashed",
-            markersize=5,
-            linewidth=2.5,
+            markersize=8,
+            linewidth=2,
             color=colors[idx],
         )
-    plt.legend()
+    plt.legend(loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0.)
     plt.xlabel("Multiplier")
     plt.ylabel("Probability of correct answer to A/B question")
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 0.75, 1])
+    plt.subplots_adjust(right=0.75)
     plt.savefig(save_to, format="svg")
     plt.savefig(save_to.replace("svg", "png"), format="png")
     # Save data in res_per_category used for plotting as .txt
@@ -169,7 +174,7 @@ def plot_out_of_distribution_data(
         f"{settings.make_result_save_suffix(layer=layer)}.svg",
     )
     plt.clf()
-    plt.figure(figsize=(6, 6))
+    plt.figure(figsize=(7.5, 5))
     res_list = []
     for multiplier in multipliers:
         results = get_data(layer, multiplier, settings)
@@ -183,8 +188,8 @@ def plot_out_of_distribution_data(
         [x[1] for x in res_list],
         marker="o",
         linestyle="dashed",
-        markersize=5,
-        linewidth=2.5,
+        markersize=8,
+        linewidth=2,
     )
     plt.xlabel("Multiplier")
     plt.ylabel("Claude score")
@@ -201,14 +206,14 @@ def plot_per_layer_data_in_distribution(
     layers: List[int], multipliers: List[float], settings: SteeringSettings
 ):
     plt.clf()
-    plt.figure(figsize=(6, 6))
+    plt.figure(figsize=(7.5, 5))
     save_to = os.path.join(
         WORKING_DIR,
         "analysis",
         f"{settings.make_result_save_suffix()}.svg",
     )
     # Get a colormap and generate a sequence of colors from that colormap
-    colors = cm.rainbow(np.linspace(0, 1, len(layers)))
+    colors = cm.viridis(np.linspace(0, 1, len(layers)))
 
     full_res = {}
     for index, layer in enumerate(layers):
@@ -224,15 +229,16 @@ def plot_per_layer_data_in_distribution(
             label=f"Layer {layer}",
             marker="o",
             linestyle="dashed",
-            markersize=5,
-            linewidth=2.5,
+            markersize=8,
+            linewidth=2,
             color=colors[index],  # Set color for each line
         )
         full_res[layer] = res_list
-    plt.legend()
+    plt.legend(loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0.)
     plt.xlabel("Multiplier")
     plt.ylabel("Probability of sycophantic answer to A/B question")
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 0.75, 1])
+    plt.subplots_adjust(right=0.75)
     plt.savefig(save_to, format="svg")
     plt.savefig(save_to.replace("svg", "png"), format="png")
     # Save data in res_list used for plotting as .txt

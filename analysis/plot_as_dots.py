@@ -3,7 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from glob import glob
 
-plt.rcParams['font.size'] = 12
+plt.rcParams['font.size'] = 14
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.serif'] = ['CMU Serif'] 
 
 def plot_as_dots(filename):
     # Load and parse the TSV data

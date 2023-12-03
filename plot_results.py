@@ -82,7 +82,7 @@ def plot_in_distribution_data_for_layer(
         f"{settings.make_result_save_suffix(layer=layer)}.svg",
     )
     plt.clf()
-    plt.figure(figsize=(2.5, 2.5))
+    plt.figure(figsize=(4, 4))
     all_results = {}
     for few_shot, label in few_shot_options:
         settings.few_shot = few_shot
